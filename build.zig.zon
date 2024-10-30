@@ -1,0 +1,23 @@
+.{
+    .name = "Jenjin",
+    .version = "0.0.0",
+    //.minimum_zig_version = "0.11.0",
+
+    .dependencies = .{
+        .system_sdk = .{ .path = "vendor/system-sdk" },
+        .zopengl = .{ .path = "vendor/zopengl" },
+        .zigimg = .{ .path = "vendor/zigimg" },
+        .zglfw = .{ .path = "vendor/zglfw" },
+        .zmath = .{ .path = "vendor/zmath" },
+        .zgui = .{ .path = "vendor/zgui" },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "vendor",
+        "src",
+        "LICENSE",
+        "README.md",
+    },
+}
