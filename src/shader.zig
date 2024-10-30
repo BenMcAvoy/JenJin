@@ -1,6 +1,7 @@
 const std = @import("std");
 const log = std.log.scoped(.shader);
 
+const zmath = @import("zmath");
 const zglfw = @import("zglfw");
 const gl = @import("zopengl").bindings;
 
@@ -49,6 +50,14 @@ pub const Shader = struct {
         return Shader{
             .id = id,
         };
+    }
+
+    pub fn setMat4(self: Shader, name: [:0]const u8, value: zmath.Mat) void {
+        gl.uniformMatrix4fv(gl.getUniformLocation(self.id, name), 1, gl.FALSE, @ptrCast(&value));
+    }
+
+    pub fn setVec3(self: Shader, name: [:0]const u8, value: @Vector(3, f32)) void {
+        gl.uniform3fv(gl.getUniformLocation(self.id, name), 1, @ptrCast(&value));
     }
 
     pub fn use(self: Shader) void {

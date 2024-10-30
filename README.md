@@ -5,7 +5,7 @@ A source available lightweight game engine built for beginners to teach programm
 Come back later, sorry! Jenjin is not ready for real usage.
 
 ## TODO
-- [ ] Basic architecture
+- [x] Basic architecture
 - [ ] Scene renderring
 - [ ] Editor
 - [ ] Serialization/Deserialization of scenes
