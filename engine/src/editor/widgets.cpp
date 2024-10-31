@@ -41,6 +41,7 @@ static void drawButtonWithDrag(const std::string &buttonLabel,
 }
 
 static void start_widget(const std::string &label, int count = 2) {
+	ImGui::ItemSize(ImVec2(0.0f, 2.0f));
   ImGui::PushID(label.c_str());
   ImGui::Columns(2);
   ImGui::SetColumnWidth(0, 100.0f);

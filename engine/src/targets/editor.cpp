@@ -20,9 +20,6 @@ EditorTarget::EditorTarget() {
 }
 
 void EditorTarget::PreRender() {
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-
   Resize(GetSize());
 
   ImGui_ImplOpenGL3_NewFrame();
@@ -33,7 +30,8 @@ void EditorTarget::PreRender() {
 
   renderTexture.Bind();
 
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	static auto bg = Jenjin::EngineRef->GetCurrentScene()->GetCamera()->GetBackgroundPointer();
+  glClearColor(bg->r, bg->g, bg->b, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glViewport(0, 0, width, height);
 }

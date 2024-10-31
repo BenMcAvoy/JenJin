@@ -14,9 +14,10 @@ Come back later, sorry! Jenjin is not ready for real usage.
 - [x] Transparency on sprites
 - [x] Icons everywhere
 - [x] Code editor in the editor
-- [ ] Autocompletion in the editor
+- [ ] Improved meshing algorithm that gives same input meshes all one mesh reference instead of making multiple mesh references and data for them.
 - [ ] Dynamic data attached to game objects at runtime
 - [ ] Hierarchy and `.Parent` in Lua along with `workspace` (e.g. `Workspace.MyGameObject.Parent` == `Workspace`)
+- [ ] Autocompletion in the editor
 
 ## TODO (Future)
 - [ ] Serialization/Deserialization of scenes to better formats

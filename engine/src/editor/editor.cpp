@@ -318,6 +318,8 @@ void Manager::inspector(Jenjin::Scene *scene) {
       ImGui::Unindent();
     }
 
+    ImGui::ItemSize(ImVec2(0, 10));
+
     if (ImGui::CollapsingHeader(appearance_title)) {
       ImGui::Indent();
       ImGui::ColorPicker3(
@@ -495,7 +497,8 @@ void Manager::code(Jenjin::Scene *scene) {
   if (showUnsaved)
     flags |= ImGuiWindowFlags_UnsavedDocument;
 
-	// TODO: Tabs at the top for each file (NOTE: This should probably be a class once this is implemented)
+  // TODO: Tabs at the top for each file (NOTE: This should probably be a class
+  // once this is implemented)
   ImGui::Begin(title, nullptr, flags);
 
   static auto save = [&]() {
