@@ -3,7 +3,15 @@
 out vec4 FragColor;
 
 uniform vec3 colour;
+uniform bool has_texture;
+uniform sampler2D tex;
+
+in vec2 texCoord;
 
 void main() {
-    FragColor = vec4(colour, 1.0);
+	FragColor = has_texture ? texture(tex, texCoord) : vec4(colour, 1.0);
+
+	if (FragColor.a < 0.1) {
+		discard;
+	}
 }

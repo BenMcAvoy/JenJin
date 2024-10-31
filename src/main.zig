@@ -41,16 +41,18 @@ pub fn main() !void {
     defer shader.deinit();
     camera.setShader(&shader);
 
-    var buffers = try Buffers.init();
+    var buffers = Buffers.init();
     defer buffers.deinit();
 
-    var object_1 = Object.init(&shader);
-    object_1.colour = .{ 0.0, 1.0, 0.0 };
-    var object_2 = Object.init(&shader);
-    object_2.colour = .{ 1.0, 0.0, 0.0 };
-    object_2.scale = .{ 2.5, 0.5 };
+    var player = Object.init(&shader);
+    player.colour = .{ 1.0, 1.0, 1.0 };
+    player.setTexture("player.png") catch unreachable;
 
-    // const objects: [2]*Object = .{ &object_1, &object_2 };
+    var asteroid = Object.init(&shader);
+    asteroid.colour = .{ 0.3, 0.3, 0.3 };
+    asteroid.position[0] = -2;
+    asteroid.position[1] = -2;
+
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
@@ -58,11 +60,10 @@ pub fn main() !void {
     var objects = try std.ArrayList(*Object).initCapacity(allocator, 2);
     defer objects.deinit();
 
-    try objects.append(&object_1);
-    try objects.append(&object_2);
+    try objects.append(&player);
+    try objects.append(&asteroid);
 
     _ = window.setFramebufferSizeCallback(resizeCallback);
-    // gl.viewport(0, 0, size[0], size[1]);
     while (!window.shouldClose() and window.getKey(.escape) != .press) {
         frame_count += 1;
 
@@ -75,30 +76,18 @@ pub fn main() !void {
         buffers.use();
         camera.use();
 
-        // Shenanigans to test object creation/modification
-        if (frame_count == 16 * 2) {
-            var obj = Object.init(&shader);
-            obj.colour = .{ 1.0, 0.0, 1.0 };
-            obj.scale = .{ 2.5, 2.5 };
-            obj.position = .{
-                3.0,
-                0.0,
-            };
-            try objects.append(&obj);
-        } else if (frame_count == 16 * 4) {
-            var obj = Object.init(&shader);
-            obj.colour = .{ 0.0, 1.0, 1.0 };
-            obj.scale = .{ 2.5, 2.5 };
-            obj.position = .{
-                -3.0,
-                0.0,
-            };
-            try objects.append(&obj);
-        } else if (frame_count >= 16 * 6 and frame_count < 16 * 8) {
-            for (objects.items) |obj| {
-                obj.rotation += 22.5;
-                obj.cached_model = null;
-            }
+        const speed = 0.1;
+        const w = window.getKey(.w) == .press;
+        const s = window.getKey(.s) == .press;
+        const a = window.getKey(.a) == .press;
+        const d = window.getKey(.d) == .press;
+        if (w or s or a or d) {
+            if (w) player.translate(0, speed);
+            if (s) player.translate(0, -speed);
+            if (a) player.translate(-speed, 0);
+            if (d) player.translate(speed, 0);
+
+            player.setRotation(if (w) 0 else if (s) 180 else if (a) 270 else if (d) 90 else 0);
         }
 
         for (objects.items) |obj| {

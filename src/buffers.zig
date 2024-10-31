@@ -23,7 +23,7 @@ pub const Buffers = struct {
     ebo: c_uint,
 
     // pub fn init(vertices: []const f32, indices: []const u32) !Buffers {
-    pub fn init() !Buffers {
+    pub fn init() Buffers {
         var vao: c_uint = undefined;
         var vbo: c_uint = undefined;
         var ebo: c_uint = undefined;

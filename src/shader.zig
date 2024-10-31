@@ -60,6 +60,14 @@ pub const Shader = struct {
         gl.uniform3fv(gl.getUniformLocation(self.id, name), 1, @ptrCast(&value));
     }
 
+    pub fn setBool(self: Shader, name: [:0]const u8, value: bool) void {
+        gl.uniform1i(gl.getUniformLocation(self.id, name), @intFromBool(value));
+    }
+
+    pub fn setInt(self: Shader, name: [:0]const u8, value: i32) void {
+        gl.uniform1i(gl.getUniformLocation(self.id, name), value);
+    }
+
     pub fn use(self: Shader) void {
         gl.useProgram(self.id);
     }

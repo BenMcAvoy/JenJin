@@ -6,10 +6,10 @@
     .dependencies = .{
         .system_sdk = .{ .path = "vendor/system-sdk" },
         .zopengl = .{ .path = "vendor/zopengl" },
-        .zigimg = .{ .path = "vendor/zigimg" },
         .zglfw = .{ .path = "vendor/zglfw" },
         .zmath = .{ .path = "vendor/zmath" },
         .zgui = .{ .path = "vendor/zgui" },
+        .zstbi = .{ .path = "vendor/zstbi" },
     },
 
     .paths = .{

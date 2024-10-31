@@ -51,12 +51,9 @@ pub fn build(b: *std.Build) void {
     const zmath = b.dependency("zmath", .{ .target = target });
     exe.root_module.addImport("zmath", zmath.module("root"));
 
-    const zigimg_dependency = b.dependency("zigimg", .{
-        .target = target,
-        .optimize = optimize,
-    });
-
-    exe.root_module.addImport("zigimg", zigimg_dependency.module("zigimg"));
+    const zstbi = b.dependency("zstbi", .{});
+    exe.root_module.addImport("zstbi", zstbi.module("root"));
+    exe.linkLibrary(zstbi.artifact("zstbi"));
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
