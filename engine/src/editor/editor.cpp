@@ -194,7 +194,7 @@ void Manager::viewport(Jenjin::Scene *scene) {
   }
 
   ImGui::GetWindowDrawList()->AddImage(
-      (void *)(intptr_t)renderTexture, ImVec2(ImGui::GetCursorScreenPos()),
+      (ImTextureID)renderTexture, ImVec2(ImGui::GetCursorScreenPos()),
       ImVec2(ImGui::GetCursorScreenPos().x + size.x,
              ImGui::GetCursorScreenPos().y + size.y),
       ImVec2(0, 1), ImVec2(1, 0));
@@ -537,10 +537,14 @@ void Manager::code(Jenjin::Scene *scene) {
   // TODO: completions on tab
   if (ImGui::InputTextMultiline("##Code", codeBuffer, sizeof(codeBuffer),
                                 ImVec2(ImGui::GetWindowWidth() - 20,
-                                       ImGui::GetWindowHeight() - 40 - 32),
+                                       ImGui::GetWindowHeight() - 40 - 32 - 24),
                                 ImGuiInputTextFlags_AllowTabInput)) {
     showUnsaved = true;
   }
+
+  ImGui::BeginChild("InfoChild", ImVec2(0, 0), true);
+  ImGui::Text("%s", codeFile);
+  ImGui::EndChild();
 
   ImGui::End();
 }

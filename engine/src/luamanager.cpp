@@ -365,7 +365,20 @@ void Bindings(LuaManager *lm, sol::state &lua) {
       &GameObject::SetScale, "SetRotation", &GameObject::SetRotation,
       "GetColor", &GameObject::GetColor, "SetColor", &GameObject::SetColor,
       "Translate", &GameObject::Translate, "Scale", &GameObject::Scale,
-      "Rotate", &GameObject::Rotate);
+      "Rotate", &GameObject::Rotate,
+
+      sol::meta_function::index,
+      [](GameObject &gobj, const std::string &key) {
+        return gobj.dataStore.DynamicGet(key);
+      },
+
+      sol::meta_function::new_index,
+      [](GameObject &gobj, const std::string &key, sol::stack_object value) {
+        gobj.dataStore.DynamicSet(key, std::move(value));
+      },
+
+      sol::meta_function::length,
+      [](GameObject &gobj) { return gobj.dataStore.entries.size(); });
 
   lua.new_usertype<GameObject::Transform>(
       "Transform",
@@ -430,6 +443,20 @@ void Bindings(LuaManager *lm, sol::state &lua) {
       return false;
     }
   });
+
+  // Globals table (this->dataStore), it needs to be bound to a `globals`
+  // variable in the lua script and have a metatable that allows indexing and
+  // new indexing of the table
+  lua.new_usertype<DataStore>(
+      "DataStore", sol::no_constructor, sol::meta_function::index,
+      [](DataStore &ds, const std::string &key) { return ds.DynamicGet(key); },
+      sol::meta_function::new_index,
+      [](DataStore &ds, const std::string &key, sol::stack_object value) {
+        ds.DynamicSet(key, std::move(value));
+      },
+      sol::meta_function::length,
+      [](DataStore &ds) { return ds.entries.size(); });
+  lua.set("globals", lm->dataStore);
 
   auto helpers_tb = lua.create_named_table("helpers");
   helpers_tb.set_function(

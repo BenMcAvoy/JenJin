@@ -1,5 +1,7 @@
 #pragma once
 
+#include "jenjin/datastore.h"
+
 #include <sol/forward.hpp>
 #include <sol/sol.hpp>
 #include <unordered_map>
@@ -27,6 +29,8 @@ public:
 
   // Getters
   sol::state *GetLuaState() { return &lua; }
+
+  DataStore dataStore;
 
 private:
   sol::state lua;
