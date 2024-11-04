@@ -23,13 +23,14 @@ public:
   void viewport(Jenjin::Scene *scene);
   void explorer(Jenjin::Scene *scene);
   void code(Jenjin::Scene *scene);
+  void console(Jenjin::Scene *scene);
 
   void backup_prompts(Jenjin::Scene *scene);
 
   void show_all(Jenjin::Scene *scene);
 
-	bool hasProjectOpen = false;
-	int renderTexture = -1;
+  bool hasProjectOpen = false;
+  int renderTexture = -1;
 
 private:
   Jenjin::GameObject *selectedObject = nullptr;

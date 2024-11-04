@@ -68,6 +68,18 @@ void Bindings(LuaManager *lm, sol::state &lua) {
     return ss.str();
   };
 
+  lua.set_function("trace", [&](sol::variadic_args va) {
+    spdlog::trace("[LUA] {}", construct_string(va));
+  });
+
+  lua.set_function("debug", [&](sol::variadic_args va) {
+    spdlog::debug("[LUA] {}", construct_string(va));
+  });
+
+  lua.set_function("print", [&](sol::variadic_args va) {
+    spdlog::info("[LUA] {}", construct_string(va));
+  });
+
   lua.set_function("info", [&](sol::variadic_args va) {
     spdlog::info("[LUA] {}", construct_string(va));
   });
@@ -80,20 +92,8 @@ void Bindings(LuaManager *lm, sol::state &lua) {
     spdlog::error("[LUA] {}", construct_string(va));
   });
 
-  lua.set_function("debug", [&](sol::variadic_args va) {
-    spdlog::debug("[LUA] {}", construct_string(va));
-  });
-
-  lua.set_function("trace", [&](sol::variadic_args va) {
-    spdlog::trace("[LUA] {}", construct_string(va));
-  });
-
   lua.set_function("critical", [&](sol::variadic_args va) {
     spdlog::critical("[LUA] {}", construct_string(va));
-  });
-
-  lua.set_function("print", [&](sol::variadic_args va) {
-    spdlog::info("[LUA] {}", construct_string(va));
   });
 
   // ========================================================================

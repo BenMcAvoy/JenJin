@@ -93,3 +93,5 @@ void Engine::Render(Target *target) {
 
   target->PostRender();
 }
+
+void Engine::SetLogSink(Jenjin::LogSink *sink) { this->logSink = sink; }

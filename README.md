@@ -15,22 +15,21 @@ Come back later, sorry! Jenjin is not ready for real usage.
 - [x] Icons everywhere
 - [x] Code editor in the editor
 - [x] Dynamic data attached to game objects at runtime
+- [x] Console window in the editor showing output from the engine
 - [ ] Improved meshing algorithm that gives same input meshes all one mesh reference instead of making multiple mesh references and data for them.
 - [ ] Hierarchy and `.Parent` in Lua along with `workspace` (e.g. `Workspace.MyGameObject.Parent` == `Workspace`)
-- [ ] Console window in the editor showing output from the engine
 - [ ] Autocompletion in the editor
 - [ ] Allow user to create UI from Lua
 - [ ] Better Explorer, allowing right click and creation of new scripts if on the scripts context menu
+- [ ] Serialization/Deserialization of scenes to better formats
 
 ## TODO (Future)
-- [ ] Serialization/Deserialization of scenes to better formats
+- [ ] Physics
+- [ ] Installer
 - [ ] Syntax highlighting in the editor
 - [ ] Sprite animations
-- [ ] Scripting (Python)
-- [ ] Physics engine
-- [ ] Instancing
-- [ ] Installer
 - [ ] 3D support
+- [ ] Scripting (Python)
 
 ## License
 License is in [`LICENSE.md`](LICENSE.md) file and should be read before using this software. (Custom source available license)

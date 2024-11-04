@@ -20,14 +20,14 @@ public:
   virtual glm::vec2 GetMousePosition() override;
 
   virtual bool RespondsToWindowResize() override;
-	virtual void SetWindowPosition(ImVec2 pos) override;
+  virtual void SetWindowPosition(ImVec2 pos) override;
 
   Jenjin::Framebuffer renderTexture;
   int width, height;
 
-  Jenjin::Editor::Manager editor;
+  Jenjin::Editor::Manager manager;
 
-	ImVec2 pos;
+  ImVec2 pos;
 };
 } // namespace Targets
 } // namespace Jenjin

@@ -147,17 +147,20 @@ void Manager::dockspace() {
 
     auto dock_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left,
                                                  0.25f, nullptr, &dockspace_id);
-    auto dock_left_up = ImGui::DockBuilderSplitNode(dock_left, ImGuiDir_Up,
-                                                    0.8f, nullptr, &dock_left);
     auto dock_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right,
                                                   0.6f, nullptr, &dockspace_id);
+    auto dock_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down,
+                                                 0.2f, nullptr, &dockspace_id);
     auto middle = dockspace_id;
 
     static auto hierarchy_title = ICON_FA_SITEMAP " Hierarchy";
-    ImGui::DockBuilderDockWindow(hierarchy_title, dock_left_up);
+    ImGui::DockBuilderDockWindow(hierarchy_title, dock_left);
 
     static auto explorer_title = ICON_FA_FOLDER " Explorer";
-    ImGui::DockBuilderDockWindow(explorer_title, dock_left);
+    ImGui::DockBuilderDockWindow(explorer_title, dock_down);
+
+    static auto console_title = ICON_FA_TERMINAL " Console";
+    ImGui::DockBuilderDockWindow(console_title, dock_down);
 
     static auto inspector_title = ICON_FA_EYE " Inspector";
     ImGui::DockBuilderDockWindow(inspector_title, dock_right);
@@ -549,6 +552,62 @@ void Manager::code(Jenjin::Scene *scene) {
   ImGui::End();
 }
 
+void Manager::console(Jenjin::Scene *scene) {
+  static auto sink = Jenjin::EngineRef->GetLogSink();
+
+  if (sink == nullptr) {
+    ImGui::Begin("Console", nullptr);
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
+    ImGui::Text("No sink set");
+    ImGui::PopStyleColor();
+    ImGui::End();
+    return;
+  }
+
+  static auto title = ICON_FA_TERMINAL " Console";
+  ImGui::Begin(title, nullptr, ImGuiWindowFlags_MenuBar);
+
+  if (ImGui::BeginMenuBar()) {
+    if (ImGui::MenuItem("Clear")) {
+      spdlog::info("Clearing logs");
+      sink->ClearLogs();
+    }
+
+    ImGui::EndMenuBar();
+  }
+
+  if (ImGui::CollapsingHeader("Error")) {
+    auto &error_logs = sink->GetErrorLogs();
+    for (auto &log : sink->GetErrorLogs()) {
+      ImGui::Text("(%d) %s", log.second, log.first.c_str());
+    }
+  }
+
+  if (ImGui::CollapsingHeader("Info")) {
+    auto &info_logs = sink->GetInfoLogs();
+    for (auto &log : sink->GetInfoLogs()) {
+      ImGui::Text("(%d) %s", log.second, log.first.c_str());
+    }
+  }
+
+  if (ImGui::CollapsingHeader("Warn")) {
+    auto &warn_logs = sink->GetWarnLogs();
+    for (auto &log : sink->GetWarnLogs()) {
+      ImGui::Text("(%d) %s", log.second, log.first.c_str());
+    }
+  }
+
+  if (ImGui::CollapsingHeader("Trace")) {
+    auto &trace_logs = sink->GetTraceLogs();
+    for (auto &log : sink->GetTraceLogs()) {
+      ImGui::Text("(%d) %s", log.second, log.first.c_str());
+    }
+  }
+
+
+  ImGui::End();
+}
+
 void Manager::show_all(Jenjin::Scene *scene) {
   bool isRunning = this->running;
   if (isRunning) {
@@ -582,6 +641,7 @@ void Manager::show_all(Jenjin::Scene *scene) {
   explorer(scene);
   viewport(scene);
   code(scene);
+  console(scene);
 }
 
 void Manager::welcome() {

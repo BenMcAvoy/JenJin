@@ -1,5 +1,6 @@
 #pragma once
 
+#include "jenjin/log.h"
 #include "jenjin/luamanager.h"
 #include "jenjin/scene.h"
 #include "jenjin/target.h"
@@ -21,11 +22,16 @@ public:
 
   Scene *GetCurrentScene() { return currentScene; }
 
+  void SetLogSink(Jenjin::LogSink *sink);
+  Jenjin::LogSink *GetLogSink() { return logSink; }
+
 private:
   std::vector<std::shared_ptr<Scene>> scenes = {};
   Scene *currentScene = nullptr;
 
-	LuaManager luaManager;
+  LuaManager luaManager;
+
+  Jenjin::LogSink *logSink = nullptr;
 };
 
 extern Engine *EngineRef;

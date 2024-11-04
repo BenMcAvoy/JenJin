@@ -1,3 +1,4 @@
+#include "jenjin/log.h"
 #define GLFW_INCLUDE_NONE
 
 #include "jenjin/editor/utils.h"
@@ -10,8 +11,8 @@
 
 #include <spdlog/spdlog.h>
 
-#include <filesystem>
 #include <cstdlib>
+#include <filesystem>
 #include <memory>
 
 #define LAUNCH_ARGS                                                            \
@@ -21,7 +22,14 @@
 void launchEditor(LAUNCH_ARGS);
 void launchRuntime(LAUNCH_ARGS);
 
+Jenjin::LogSink *g_logSink = nullptr;
+
 int main(int argc, char *argv[]) {
+  auto logSink = std::make_shared<Jenjin::LogSink>();
+  auto logger = std::make_shared<spdlog::logger>("default", logSink);
+  g_logSink = logSink.get();
+  spdlog::set_default_logger(logger);
+
   bool editor = true; // We use the editor by default
 
   for (int i = 0; i < argc; i++) {
@@ -35,10 +43,11 @@ int main(int argc, char *argv[]) {
   Jenjin::Helpers::InitiateImGui(window);
 
   Jenjin::Engine engine(window);
+
   auto scene = std::make_shared<Jenjin::Scene>();
   engine.AddScene(scene, true);
 
-	spdlog::info("Launching Jenjin {}", editor ? "Editor" : "Runtime");
+  spdlog::info("Launching Jenjin {}", editor ? "Editor" : "Runtime");
   (editor ? launchEditor : launchRuntime)(engine, window, scene);
 }
 
@@ -47,6 +56,8 @@ void launchEditor(LAUNCH_ARGS) {
 
   auto editor = Jenjin::Targets::EditorTarget();
   scene->SetTarget(&editor);
+
+  engine.SetLogSink(g_logSink);
 
   while (!glfwWindowShouldClose(window)) {
     engine.Render(&editor);
@@ -60,12 +71,12 @@ void launchRuntime(LAUNCH_ARGS) {
   auto runtime = Jenjin::Targets::RuntimeTarget();
   scene->SetTarget(&runtime);
 
-	if (!std::filesystem::exists("scripts")) {
-		spdlog::error("Could not find `scripts` directory");
-		exit(1);
-	}
+  if (!std::filesystem::exists("scripts")) {
+    spdlog::error("Could not find `scripts` directory");
+    exit(1);
+  }
 
-	scene->GetLuaManager()->LoadDirectory("scripts");
+  scene->GetLuaManager()->LoadDirectory("scripts");
 
   // Look for `main.jenscene` in the current directory
   if (!std::filesystem::exists("main.jenscene")) {
@@ -74,7 +85,7 @@ void launchRuntime(LAUNCH_ARGS) {
   }
 
   scene->Load("main.jenscene");
-	scene->GetLuaManager()->Ready();
+  scene->GetLuaManager()->Ready();
 
   while (!glfwWindowShouldClose(window)) {
     engine.Render(&runtime);
