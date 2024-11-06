@@ -1,4 +1,6 @@
 # Jenjin (Engine/Editor)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/JenjinEngine/Jenjin) [![build](https://github.com/JenjinEngine/Jenjin/actions/workflows/build.yml/badge.svg)](https://github.com/JenjinEngine/Jenjin/actions/workflows/build.yml) [![wakatime](https://wakatime.com/badge/user/018c21b1-4778-4fc3-9702-6ad56350371c/project/30c77bc6-7680-4771-b43c-25b6fcd64dfd.svg)](https://wakatime.com/badge/user/018c21b1-4778-4fc3-9702-6ad56350371c/project/30c77bc6-7680-4771-b43c-25b6fcd64dfd)
+\
 A source available lightweight game engine built for beginners to teach programming for education purposes.
 
 ## Usage
