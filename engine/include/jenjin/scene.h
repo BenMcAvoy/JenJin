@@ -13,7 +13,6 @@
 
 #include <fstream>
 #include <memory>
-#include <vector>
 
 namespace Jenjin {
 class Scene {
@@ -23,12 +22,21 @@ public:
 
   void SetTarget(Target *target);
 
-  void AddGameObject(std::shared_ptr<GameObject> gameObject);
-  void RemoveGameObject(GameObject *gameObject);
-  void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
+  /*void AddGameObject(std::shared_ptr<GameObject> gameObject);*/
+  /*void RemoveGameObject(GameObject *gameObject);*/
+  /*void RemoveGameObject(std::shared_ptr<GameObject> gameObject);*/
 
-  void SetGameObjectTexture(GameObject *gameObject,
-                            const std::string &texturePath);
+  /*void SetGameObjectTexture(GameObject *gameObject,*/
+  /*                          const std::string &texturePath);*/
+
+  void AddGameObject(const std::string &name,
+                     std::shared_ptr<GameObject> gameObject);
+  void RemoveGameObject(std::string name);
+
+  void RenameGameObject(std::string oldName, std::string newName);
+  void RenameGameObject(std::shared_ptr<GameObject> gameObject,
+                        std::string newName);
+
   void SetGameObjectTexture(std::shared_ptr<GameObject> gameObject,
                             const std::string &texturePath);
 
@@ -40,9 +48,12 @@ public:
   std::shared_ptr<GameObject> GetGameObject(const std::string &name);
 
   Camera *GetCamera() { return &camera; }
-  std::vector<std::shared_ptr<GameObject>> *GetGameObjects() {
-    return &gameObjects;
+
+  std::unordered_map<std::string, std::shared_ptr<GameObject>> &
+  GetGameObjects() {
+    return gameObjects;
   }
+
   Target *GetTarget() { return target; }
   LuaManager *GetLuaManager() { return &luaManager; }
 
@@ -54,13 +65,12 @@ public:
 private:
   GLuint vao, vbo, ebo = 0;
 
-  std::vector<std::shared_ptr<GameObject>> gameObjects = {};
-
-  std::vector<MeshReference> meshReferences = {};
+  std::unordered_map<std::string, std::shared_ptr<GameObject>> gameObjects;
   std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
 
   Shader shader = Shader("resources/shaders/default_vert.glsl",
                          "resources/shaders/default_frag.glsl");
+
   Target *target = nullptr;
 
   Camera camera = Camera(&shader, glm::vec2(800, 600));

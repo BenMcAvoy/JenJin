@@ -18,14 +18,16 @@ Come back later, sorry! Jenjin is not ready for real usage.
 - [x] Code editor in the editor
 - [x] Dynamic data attached to game objects at runtime
 - [x] Console window in the editor showing output from the engine
-- [ ] Improved meshing algorithm that gives same input meshes all one mesh reference instead of making multiple mesh references and data for them.
-- [ ] Hierarchy and `.Parent` in Lua along with `workspace` (e.g. `Workspace.MyGameObject.Parent` == `Workspace`)
-- [ ] Autocompletion in the editor
+- [x] Switch to only quads for rendering
+- [ ] * -> & (less pointers! more references!)
 - [ ] Allow user to create UI from Lua
-- [ ] Better Explorer, allowing right click and creation of new scripts if on the scripts context menu
+- [ ] Line numbers in the code editor 
+- [ ] Hierarchy and `.Parent` in Lua along with `workspace` (e.g. `Workspace.MyGameObject.Parent` == `Workspace`)
 - [ ] Serialization/Deserialization of scenes to better formats
+- [ ] Better Explorer, allowing right click and creation of new scripts if on the scripts context menu
 
 ## TODO (Future)
+- [ ] Autocompletion in the editor
 - [ ] Physics
 - [ ] Installer
 - [ ] Syntax highlighting in the editor

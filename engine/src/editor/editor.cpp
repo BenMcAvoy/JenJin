@@ -1,3 +1,4 @@
+#include <cstring>
 #define GLFW_INCLUDE_NONE
 
 #include "jenjin/editor/editor.h"
@@ -20,7 +21,6 @@
 #include <filesystem>
 #include <memory>
 #include <string>
-#include <vector>
 
 static char codeBuffer[1024 * 16] = {0};
 
@@ -218,8 +218,8 @@ void Manager::hierarchy(Jenjin::Scene *scene) {
     return;
   }
 
-  std::vector<std::shared_ptr<Jenjin::GameObject>> *gameObjects =
-      Jenjin::EngineRef->GetCurrentScene()->GetGameObjects();
+  std::unordered_map<std::string, std::shared_ptr<Jenjin::GameObject>>
+      &gameObjects = Jenjin::EngineRef->GetCurrentScene()->GetGameObjects();
 
   static auto title = ICON_FA_SITEMAP " Hierarchy";
   ImGui::Begin(title);
@@ -243,18 +243,18 @@ void Manager::hierarchy(Jenjin::Scene *scene) {
 
     if (ImGui::Button("Create##Add") ||
         ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) {
-      auto gameObject = std::make_shared<Jenjin::GameObject>(
-          name, Jenjin::Helpers::CreateQuad(2.0f, 2.0f));
-      scene->AddGameObject(gameObject);
-      scene->Build();
+      auto gameObject = std::make_shared<Jenjin::GameObject>();
+      scene->AddGameObject(name, gameObject);
 
       selectedCamera = false;
-      selectedObject = gameObjects->back().get();
+      selectedObject.ptr = gameObjects[name];
+      selectedObject.name = name;
+      selectedObject.valid = true;
 
       memset(this->renameGameObjectBuffer, 0,
              sizeof(this->renameGameObjectBuffer));
-      memcpy(this->renameGameObjectBuffer, selectedObject->name.c_str(),
-             selectedObject->name.size());
+
+      memcpy(this->renameGameObjectBuffer, name, sizeof(name));
 
       ImGui::CloseCurrentPopup();
     }
@@ -272,24 +272,29 @@ void Manager::hierarchy(Jenjin::Scene *scene) {
   static auto cameraText = ICON_FA_VIDEO " Camera";
   if (ImGui::Selectable(cameraText, selectedCamera)) {
     selectedCamera = !selectedCamera;
+
     if (selectedCamera)
-      selectedObject = nullptr;
+      selectedObject.valid = false;
   }
 
-  for (std::shared_ptr<Jenjin::GameObject> gameObject : *gameObjects) {
-    bool isSelected = selectedObject == gameObject.get();
+  for (auto &[name, gameObject] : gameObjects) {
+    bool isSelected =
+        selectedObject.ptr.get() == gameObject.get() && selectedObject.valid;
 
-    const auto text = fmt::format("{} {}", ICON_FA_CUBE, gameObject->name);
+    const auto text = fmt::format("{} {}", ICON_FA_CUBE, name);
     if (ImGui::Selectable(text.c_str(), isSelected)) {
       if (isSelected) {
-        selectedObject = nullptr;
+        selectedObject.valid = false;
       } else {
         selectedCamera = false;
-        selectedObject = gameObject.get();
+        selectedObject.ptr = gameObject;
+        selectedObject.name = name;
+        selectedObject.valid = true;
+
         memset(this->renameGameObjectBuffer, 0,
                sizeof(this->renameGameObjectBuffer));
-        memcpy(this->renameGameObjectBuffer, selectedObject->name.c_str(),
-               selectedObject->name.size());
+
+        memcpy(this->renameGameObjectBuffer, name.c_str(), name.size());
       }
     }
   }
@@ -303,7 +308,7 @@ void Manager::hierarchy(Jenjin::Scene *scene) {
 }
 
 void Manager::inspector(Jenjin::Scene *scene) {
-  if (!selectedObject && !selectedCamera) {
+  if (!selectedObject.valid && !selectedCamera) {
     return;
   }
 
@@ -332,13 +337,13 @@ void Manager::inspector(Jenjin::Scene *scene) {
     }
   }
 
-  if (selectedObject) {
+  if (selectedObject.valid) {
     static auto transform_title =
         ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT " Transform";
     if (ImGui::CollapsingHeader(transform_title,
                                 ImGuiTreeNodeFlags_DefaultOpen)) {
       ImGui::Indent();
-      Jenjin::Editor::Widgets::transformWidget(&selectedObject->transform);
+      Jenjin::Editor::Widgets::transformWidget(&selectedObject.ptr->transform);
       ImGui::Unindent();
     }
 
@@ -346,7 +351,7 @@ void Manager::inspector(Jenjin::Scene *scene) {
 
     if (ImGui::CollapsingHeader(appearance_title)) {
       ImGui::Indent();
-      ImGui::ColorPicker3("Color", glm::value_ptr(selectedObject->color));
+      ImGui::ColorPicker3("Color", glm::value_ptr(selectedObject.ptr->color));
       ImGui::Unindent();
     }
 
@@ -364,13 +369,14 @@ void Manager::inspector(Jenjin::Scene *scene) {
 
       static auto text = ICON_FA_PEN " Rename";
       if (ImGui::Button(text, ImVec2(itemWidth, 0))) {
-        selectedObject->SetName(renameGameObjectBuffer);
+        /*selectedObject->SetName(renameGameObjectBuffer);*/
+        scene->RenameGameObject(selectedObject.name, renameGameObjectBuffer);
       }
 
       static auto delete_text = ICON_FA_TRASH " Delete";
       if (ImGui::Button(delete_text, ImVec2(itemWidth, 0))) {
-        scene->RemoveGameObject(selectedObject);
-        selectedObject = nullptr;
+        scene->RemoveGameObject(selectedObject.name);
+        selectedObject.valid = false;
       }
 
       ImGui::Unindent();
@@ -425,8 +431,8 @@ void Manager::explorer(Jenjin::Scene *scene) {
               auto texture_text = fmt::format(
                   "{} {}", ICON_FA_IMAGE, subfile.path().filename().string());
               if (ImGui::Selectable(texture_text.c_str())) {
-                if (selectedObject) {
-                  scene->SetGameObjectTexture(selectedObject,
+                if (selectedObject.valid) {
+                  scene->SetGameObjectTexture(selectedObject.ptr,
                                               subfile.path().string());
                 } else {
                   spdlog::warn("No object selected");
@@ -604,7 +610,6 @@ void Manager::console(Jenjin::Scene *scene) {
     }
   }
 
-
   ImGui::End();
 }
 
@@ -758,7 +763,7 @@ void Manager::welcome() {
       spdlog::info("Changed cwd to {}",
                    std::filesystem::current_path().string());
 
-      Jenjin::EngineRef->GetCurrentScene()->GetGameObjects()->clear();
+      Jenjin::EngineRef->GetCurrentScene()->GetGameObjects().clear();
       Jenjin::EngineRef->GetCurrentScene()->Save("main.jenscene");
       ImGui::CloseCurrentPopup();
     }

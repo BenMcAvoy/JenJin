@@ -1,7 +1,6 @@
 #pragma once
 
-#include "jenjin/mesh.h"
-
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -10,7 +9,5 @@ namespace Helpers {
 GLFWwindow *CreateWindow(int width, int height, const char *title);
 void CheckWindow(GLFWwindow *window);
 void InitiateImGui(GLFWwindow *window);
-
-Mesh CreateQuad(int width, int height);
 } // namespace Helpers
 } // namespace Jenjin

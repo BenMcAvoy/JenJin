@@ -6,7 +6,6 @@ in vec2 j_fragTexCoord;
 
 uniform sampler2D u_texture;
 uniform bool u_hasTexture;
-uniform bool u_mixColor;
 
 uniform vec3 u_color;
 
@@ -23,8 +22,4 @@ void main() {
 	}
 
 	FragColor = vec3(colour.r, colour.g, colour.b);
-
-	if (u_mixColor) {
-		FragColor *= u_color;
-	}
 }

@@ -47,39 +47,26 @@ void InitiateImGui(GLFWwindow *window) {
 
   io.Fonts->AddFontFromFileTTF("resources/fonts/Roboto-Medium.ttf", 16.0f);
 
-	float base = 16.0f;
-	float icon = base * 2.0f / 3.0f;
+  float base = 16.0f;
+  float icon = base * 2.0f / 3.0f;
 
-	static const ImWchar icon_ranges[] = { ICON_MIN_FA,	ICON_MAX_16_FA, 0 };
-	ImFontConfig config;
-	config.MergeMode = true;
-	config.PixelSnapH = true;
-	config.GlyphMinAdvanceX = icon;
-	io.Fonts->AddFontFromFileTTF("./resources/fonts/fa-solid-900.ttf", base, &config, icon_ranges);
+  static const ImWchar icon_ranges[] = {ICON_MIN_FA, ICON_MAX_16_FA, 0};
+  ImFontConfig config;
+  config.MergeMode = true;
+  config.PixelSnapH = true;
+  config.GlyphMinAdvanceX = icon;
+  io.Fonts->AddFontFromFileTTF("./resources/fonts/fa-solid-900.ttf", base,
+                               &config, icon_ranges);
 
   ImGui::StyleColorsDark();
-	ImGuiStyle& style = ImGui::GetStyle();
+  ImGuiStyle &style = ImGui::GetStyle();
 
-	style.DockingSeparatorSize = 1.0f;
-	style.FrameRounding = 4.0f;
-	style.ChildRounding = 4.0f;
-	style.PopupRounding = 2.0f;
+  style.DockingSeparatorSize = 1.0f;
+  style.FrameRounding = 4.0f;
+  style.ChildRounding = 4.0f;
+  style.PopupRounding = 2.0f;
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 460");
-}
-
-Mesh CreateQuad(int width, int height) {
-  Mesh mesh;
-
-  mesh.vertices = {
-      Vertex{{-width / 2, -height / 2, 0.0f}, {0.0f, 0.0f}},
-      Vertex{{width / 2, -height / 2, 0.0f}, {1.0f, 0.0f}},
-      Vertex{{width / 2, height / 2, 0.0f}, {1.0f, 1.0f}},
-      Vertex{{-width / 2, height / 2, 0.0f}, {0.0f, 1.0f}},
-  };
-
-  mesh.indices = {0, 1, 2, 2, 3, 0};
-  return mesh;
 }
 } // namespace Jenjin::Helpers

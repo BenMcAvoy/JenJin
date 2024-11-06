@@ -33,7 +33,12 @@ public:
   int renderTexture = -1;
 
 private:
-  Jenjin::GameObject *selectedObject = nullptr;
+  struct selectedObject_t {
+    std::shared_ptr<Jenjin::GameObject> ptr = nullptr;
+    std::string name = "";
+    bool valid = false;
+  } selectedObject;
+
   bool selectedCamera = false;
 
   char renameGameObjectBuffer[256] = {0};

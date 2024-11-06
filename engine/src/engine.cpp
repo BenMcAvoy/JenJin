@@ -1,7 +1,6 @@
 #define GLFW_INCLUDE_NONE
 
 #include "jenjin/engine.h"
-#include "jenjin/editor/state.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -12,8 +11,6 @@ using namespace Jenjin;
 const char *VERSION = "0.0.1";
 
 Engine *Jenjin::EngineRef = nullptr;
-
-Jenjin::Editor::State_t Jenjin::Editor::State;
 
 Engine::Engine(GLFWwindow *window) {
   EngineRef = this;

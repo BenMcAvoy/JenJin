@@ -330,38 +330,20 @@ void Bindings(LuaManager *lm, sol::state &lua) {
   // Jenjin userdata
   // ========================================================================
 
-  lua.new_usertype<Scene>(
-      "Scene", sol::no_constructor, "AddGameObject", &Scene::AddGameObject,
-      "RemoveGameObject",
-      sol::overload((void(Scene::*)(GameObject *)) & Scene::RemoveGameObject,
-                    (void(Scene::*)(std::shared_ptr<GameObject>)) &
-                        Scene::RemoveGameObject),
-      "SetGameObjectTexture",
-      sol::overload(
-          (void(Scene::*)(GameObject *, const std::string &)) &
-              Scene::SetGameObjectTexture,
-          (void(Scene::*)(std::shared_ptr<GameObject>, const std::string &)) &
-              Scene::SetGameObjectTexture),
-      "Build", &Scene::Build,
-      //"Update", &Scene::Update, "Render",
-      // &Scene::Render,
-      "GetGameObject", &Scene::GetGameObject, "GetCamera", //
-      &Scene::GetCamera, "GetGameObjects", &Scene::GetGameObjects, "GetTarget",
-      &Scene::GetTarget, "GetLuaManager", &Scene::GetLuaManager, "Save",
-      sol::overload((void(Scene::*)(const std::string &)) & Scene::Save,
-                    (void(Scene::*)(std::ofstream &)) & Scene::Save),
-      "Load",
-      sol::overload((void(Scene::*)(const std::string &)) & Scene::Load,
-                    (void(Scene::*)(std::ifstream &)) & Scene::Load));
+  lua.new_usertype<Scene>("Scene", sol::no_constructor, "AddGameObject",
+                          &Scene::AddGameObject, "GetGameObject",
+                          &Scene::GetGameObject, "SetGameObjectTexture",
+                          &Scene::SetGameObjectTexture, "RemoveGameObject",
+                          &Scene::RemoveGameObject);
 
   lua.new_usertype<GameObject>(
-      "GameObject", sol::factories([](const std::string &name, Mesh mesh) {
-        return std::make_shared<GameObject>(name, mesh);
-      }),
-      "mixColor", &GameObject::mixColor, "GetName", &GameObject::GetName,
+      /*"GameObject", sol::constructors<GameObject()>(),*/
+      "GameObject",
+      sol::factories([]() { return std::make_shared<GameObject>(); }),
+
       "GetPosition", &GameObject::GetPosition, "GetScale",
-      &GameObject::GetScale, "GetRotation", &GameObject::GetRotation, "SetName",
-      &GameObject::SetName, "SetPosition", &GameObject::SetPosition, "SetScale",
+      &GameObject::GetScale, "GetRotation", &GameObject::GetRotation,
+      "SetPosition", &GameObject::SetPosition, "SetScale",
       &GameObject::SetScale, "SetRotation", &GameObject::SetRotation,
       "GetColor", &GameObject::GetColor, "SetColor", &GameObject::SetColor,
       "Translate", &GameObject::Translate, "Scale", &GameObject::Scale,
@@ -459,8 +441,9 @@ void Bindings(LuaManager *lm, sol::state &lua) {
   lua.set("globals", lm->dataStore);
 
   auto helpers_tb = lua.create_named_table("helpers");
-  helpers_tb.set_function(
-      "CreateQuad", [&]() { return Jenjin::Helpers::CreateQuad(2.0f, 2.0f); });
+  (void)helpers_tb; // TODO: Add helper functions (used to have mesh creation
+                    // functions, but custom meshes are no longer supported
+                    // as rects are enough)
 }
 
 LuaManager::LuaManager() {
