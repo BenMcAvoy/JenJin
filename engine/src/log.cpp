@@ -1,5 +1,4 @@
 #include "jenjin/log.h"
-#include <fmt/format.h>
 
 using namespace Jenjin;
 
