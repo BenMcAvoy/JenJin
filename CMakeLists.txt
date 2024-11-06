@@ -10,6 +10,11 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 # Project declaration
 project(Jenjin)
 
+if (WIN32)
+	message(STATUS "Manually enabling unicode support")
+    add_compile_options(/utf-8)
+endif()
+
 add_subdirectory(megasource/libs/)
 add_subdirectory(engine)
 add_subdirectory(jenjin)
