@@ -26,7 +26,6 @@ public:
   glm::vec3 color = glm::vec3(1.0f);
 
   std::string texturePath = "";
-
   DataStore dataStore;
 
   // Getters

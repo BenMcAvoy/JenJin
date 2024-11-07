@@ -1,4 +1,6 @@
 #include <cstring>
+#include <sol/make_reference.hpp>
+#include <sol/object.hpp>
 #define GLFW_INCLUDE_NONE
 
 #include "jenjin/editor/editor.h"
@@ -353,6 +355,42 @@ void Manager::inspector(Jenjin::Scene *scene) {
       ImGui::Indent();
       ImGui::ColorPicker3("Color", glm::value_ptr(selectedObject.ptr->color));
       ImGui::Unindent();
+    }
+
+    ImGui::ItemSize(ImVec2(0, 10));
+
+    static auto lua_data_title = ICON_FA_DATABASE " Lua Data";
+    if (ImGui::CollapsingHeader(lua_data_title)) {
+      ImGui::Indent();
+
+      auto &dataStore = selectedObject.ptr->dataStore;
+
+      if (ImGui::BeginTable("luaVars", 2)) {
+        for (auto &[key, value] : dataStore.entries) {
+          ImGui::TableNextRow();
+
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("%s", key.c_str());
+
+          ImGui::TableSetColumnIndex(1);
+          if (value.get_type() == sol::type::number) {
+            float copy = value.as<float>();
+            ImGui::PushID(key.c_str());
+            if (ImGui::DragFloat("##Value", &copy)) {
+              scene->GetLuaManager()->Execute(
+                  fmt::format("scene:GetGameObject('{}')['{}'] = {}",
+                              selectedObject.name, key, copy));
+            }
+            ImGui::PopID();
+          } else if (value.get_type() == sol::type::string) {
+            ImGui::Text("%s", value.as<std::string>().c_str());
+          } else {
+            ImGui::Text("Unknown type");
+          }
+        }
+
+        ImGui::EndTable();
+      }
     }
 
     ImGui::ItemSize(ImVec2(0, 10));
